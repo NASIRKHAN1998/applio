@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Applio: apply to better jobs, faster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e9ecf6;--paper:#fbfbff;--ink:#1a1d3a;--mute:#6a6f93;--line:#d9dcee;--accent:#5a49f5;--accent-ink:#fff;--ok:#12a67a;--warn:#e0912a;
+--h:'Bricolage Grotesque',Georgia,serif;--b:'Instrument Sans',system-ui,sans-serif}
+@media(prefers-color-scheme:dark){:root{--bg:#12142a;--paper:#1b1e3d;--ink:#eceefc;--mute:#9a9fc8;--line:#2d315c;--accent:#8b7dff;--accent-ink:#12142a;--ok:#3ddba9}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--b)}
+.wrap{max-width:1120px;margin:0 auto;padding:28px 20px 60px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:34px}
+.logo{font:700 22px var(--h);letter-spacing:-.02em}
+.logo i{display:inline-block;width:14px;height:14px;border-radius:50% 50% 50% 4px;background:var(--accent);margin-right:8px}
+h1{font:700 clamp(34px,5.4vw,62px)/1.02 var(--h);letter-spacing:-.035em;margin:0 0 14px;max-width:15ch}
+.sub{color:var(--mute);max-width:52ch;margin:0 0 34px;font-size:18px}
+.grid{display:grid;grid-template-columns:360px 1fr;gap:22px;align-items:start}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px}
+.side{position:sticky;top:18px}
+@media(max-width:860px){.side{position:static}}
+label{display:block;font-weight:600;font-size:14px;margin:14px 0 6px}
+input,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
+textarea{resize:vertical;min-height:170px}
+input:focus,textarea:focus,button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn{font:600 15px var(--b);background:var(--accent);color:var(--accent-ink);border:0;border-radius:12px;padding:12px 18px;cursor:pointer;transition:transform .15s}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn[disabled]{opacity:.5;cursor:wait}
+.full{width:100%;margin-top:16px}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tab{font:600 14px var(--b);padding:9px 16px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--mute);cursor:pointer}
+.tab[aria-selected=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.search{display:flex;gap:10px;margin-bottom:16px}
+.job{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin-bottom:12px}
+.job h3{font:700 19px/1.25 var(--h);margin:0 0 2px;letter-spacing:-.01em}
+.meta{color:var(--mute);font-size:14px;margin:0 0 12px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.work{margin-top:16px;padding-top:16px;border-top:1px dashed var(--line);display:grid;grid-template-columns:92px 1fr;gap:18px}
+@media(max-width:560px){.work{grid-template-columns:1fr}}
+.ring{position:relative;width:92px;height:92px}
+.ring svg{transform:rotate(-90deg)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font:700 24px var(--h)}
+.tips{margin:12px 0 0;padding-left:18px;color:var(--mute);font-size:14px}
+.empty{text-align:center;color:var(--mute);padding:40px 10px}
+.chip{font-size:12px;font-weight:600;padding:3px 10px;border-radius:99px;background:var(--bg);color:var(--mute)}
+.chip.ok{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+.err{color:#d6455d;font-size:14px;margin-top:8px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:11px 18px;border-radius:12px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+.note{font-size:13px;color:var(--mute);margin-top:10px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><div class="logo"><i></i>Applio</div><span class="chip" id="count">0 applications sent</span></header>
+  <h1>Stop retyping your CV for every job.</h1>
+  <p class="sub">Paste your CV once. Applio finds remote jobs, scores your match, and writes a cover letter for each one. You review it and apply.</p>
+
+  <div class="grid">
+    <aside class="panel side">
+      <strong style="font:700 18px var(--h)">Your profile</strong>
+      <label for="name">Full name</label>
+      <input id="name" placeholder="Ayesha Khan" autocomplete="name">
+      <label for="cv">Your CV (plain text)</label>
+      <textarea id="cv" placeholder="Paste your CV here: experience, skills, education."></textarea>
+      <label for="file" style="font-weight:500;color:var(--mute)">or upload a .txt file</label>
+      <input id="file" type="file" accept=".txt,.md">
+      <p class="note">Saved only in this browser. It is sent to the AI when you tailor an application.</p>
+    </aside>
+
+    <main>
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" aria-selected="true" data-t="jobs">Find jobs</button>
+        <button class="tab" role="tab" aria-selected="false" data-t="track">Applications</button>
+      </div>
+
+      <section id="jobs">
+        <form class="search" id="sf">
+          <input id="q" placeholder="Job title, e.g. React developer" aria-label="Job title">
+          <button class="btn" id="sb">Search</button>
+        </form>
+        <div id="list"><div class="empty">Search for a job title to see remote openings.</div></div>
+      </section>
+
+      <section id="track" hidden><div id="tl"></div></section>
+    </main>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let jobs=[],applied=store.get('applio_applied',[]);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1800)}
+
+$('#name').value=store.get('applio_name','');$('#cv').value=store.get('applio_cv','');
+$('#name').oninput=e=>store.set('applio_name',e.target.value);
+$('#cv').oninput=e=>store.set('applio_cv',e.target.value);
+$('#file').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{$('#cv').value=r.result;store.set('applio_cv',r.result);toast('CV loaded')};r.readAsText(f)};
+
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',x===b));
+  $('#jobs').hidden=b.dataset.t!=='jobs';$('#track').hidden=b.dataset.t!=='track';
+  if(b.dataset.t==='track')renderTrack();
+});
+
+$('#sf').onsubmit=async e=>{
+  e.preventDefault();const q=$('#q').value.trim();if(!q)return;
+  $('#sb').disabled=true;$('#list').innerHTML='<div class="empty">Searching…</div>';
+  try{const r=await fetch('/api/jobs?q='+encodeURIComponent(q));const d=await r.json();jobs=d.jobs||[];renderJobs()}
+  catch(x){$('#list').innerHTML='<div class="empty">Could not load jobs. Check your connection and search again.</div>'}
+  $('#sb').disabled=false;
+};
+
+function renderJobs(){
+  if(!jobs.length){$('#list').innerHTML='<div class="empty">No jobs found. Try a broader title.</div>';return}
+  $('#list').innerHTML=jobs.map((j,i)=>`<article class="job" id="j${i}">
+    <h3>${esc(j.title)}</h3>
+    <p class="meta">${esc(j.company)} · ${esc(j.location||'Remote')}${j.salary?' · '+esc(j.salary):''}</p>
+    <div class="row"><button class="btn" data-i="${i}">Tailor my application</button>
+    <a class="btn ghost" href="${esc(j.url)}" target="_blank" rel="noopener" style="text-decoration:none">View job</a>
+    ${applied.some(a=>a.id===j.id)?'<span class="chip ok">Applied</span>':''}</div>
+    <div class="slot"></div></article>`).join('');
+  document.querySelectorAll('.job .btn[data-i]').forEach(b=>b.onclick=()=>tailor(+b.dataset.i,b));
+}
+
+async function tailor(i,btn){
+  const cv=$('#cv').value.trim();
+  const slot=$('#j'+i+' .slot');
+  if(cv.length<80){slot.innerHTML='<p class="err">Paste your CV in the profile panel first.</p>';return}
+  btn.disabled=true;btn.textContent='Writing…';slot.innerHTML='';
+  try{
+    const r=await fetch('/api/generate',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({cv,name:$('#name').value,job:jobs[i]})});
+    const d=await r.json();if(!r.ok)throw new Error(d.error||'Failed');
+    const s=Math.max(0,Math.min(100,+d.score||0)),col=s>=70?'var(--ok)':s>=45?'var(--warn)':'#d6455d',C=2*Math.PI*38;
+    slot.innerHTML=`<div class="work"><div class="ring"><svg width="92" height="92" viewBox="0 0 92 92"><circle cx="46" cy="46" r="38" fill="none" stroke="var(--line)" stroke-width="9"/><circle cx="46" cy="46" r="38" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${C*s/100} ${C}"/></svg><b>${s}</b></div>
+      <div><label style="margin-top:0" for="l${i}">Cover letter (edit before sending)</label>
+      <textarea id="l${i}" style="min-height:230px">${esc(d.letter)}</textarea>
+      <ul class="tips">${(d.tips||[]).map(t=>`<li>${esc(t)}</li>`).join('')}</ul>
+      <div class="row" style="margin-top:14px"><button class="btn" data-a="copy">Copy letter</button>
+      <button class="btn ghost" data-a="open">Open job page</button>
+      <button class="btn ghost" data-a="done">Mark as applied</button></div></div></div>`;
+    slot.querySelector('[data-a=copy]').onclick=()=>{navigator.clipboard.writeText($('#l'+i).value).then(()=>toast('Letter copied'))};
+    slot.querySelector('[data-a=open]').onclick=()=>window.open(jobs[i].url,'_blank','noopener');
+    slot.querySelector('[data-a=done]').onclick=()=>{
+      if(!applied.some(a=>a.id===jobs[i].id)){applied.unshift({id:jobs[i].id,title:jobs[i].title,company:jobs[i].company,url:jobs[i].url,score:s,date:new Date().toLocaleDateString()});store.set('applio_applied',applied)}
+      count();toast('Saved to Applications');renderJobs()};
+  }catch(e){slot.innerHTML=`<p class="err">${esc(e.message)}. Try again in a moment.</p>`}
+  btn.disabled=false;btn.textContent='Tailor my application';
+}
+
+function renderTrack(){
+  $('#tl').innerHTML=applied.length?applied.map(a=>`<div class="job"><h3>${esc(a.title)}</h3>
+  <p class="meta">${esc(a.company)} · applied ${esc(a.date)} · match ${a.score}</p>
+  <a href="${esc(a.url)}" target="_blank" rel="noopener">Open job page</a></div>`).join(''):'<div class="empty">Applications you mark as applied will appear here.</div>';
+}
+function count(){$('#count').textContent=applied.length+' application'+(applied.length===1?'':'s')+' sent'}
+count();
+</script>
+</body>
+</html>
